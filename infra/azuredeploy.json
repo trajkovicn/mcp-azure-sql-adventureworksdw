@@ -1,0 +1,134 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Deployment location"
+      }
+    },
+    "sqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for the Azure SQL logical server (must be globally unique)."
+      }
+    },
+    "adminLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "Administrator login name."
+      }
+    },
+    "adminPassword": {
+      "type": "secureString",
+      "metadata": {
+        "description": "Administrator password."
+      }
+    },
+    "databaseName": {
+      "type": "string",
+      "defaultValue": "AdventureWorksDW",
+      "metadata": {
+        "description": "Database name."
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "defaultValue": "S0",
+      "metadata": {
+        "description": "Database SKU (e.g., Basic, S0)."
+      }
+    },
+    "maxSizeBytes": {
+      "type": "int",
+      "defaultValue": 5368709120,
+      "metadata": {
+        "description": "Max DB size in bytes."
+      }
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Allow Azure services (0.0.0.0 firewall rule)."
+      }
+    },
+    "clientIp": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional client IPv4 address to allow."
+      }
+    }
+  },
+  "variables": {
+    "sqlApiVersion": "2022-05-01-preview"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2022-05-01-preview",
+      "name": "[parameters('sqlServerName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "administratorLogin": "[parameters('adminLogin')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "version": "12.0",
+        "publicNetworkAccess": "Enabled",
+        "minimalTlsVersion": "1.2"
+      },
+      "resources": [
+        {
+          "type": "databases",
+          "apiVersion": "2022-05-01-preview",
+          "name": "[parameters('databaseName')]",
+          "location": "[parameters('location')]",
+          "sku": {
+            "name": "[parameters('skuName')]"
+          },
+          "properties": {
+            "maxSizeBytes": "[parameters('maxSizeBytes')]",
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "zoneRedundant": false
+          }
+        },
+        {
+          "condition": "[parameters('allowAzureServices')]",
+          "type": "firewallRules",
+          "apiVersion": "2022-05-01-preview",
+          "name": "AllowAzureServices",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "condition": "[not(empty(parameters('clientIp')))]",
+          "type": "firewallRules",
+          "apiVersion": "2022-05-01-preview",
+          "name": "ClientIp",
+          "properties": {
+            "startIpAddress": "[parameters('clientIp')]",
+            "endIpAddress": "[parameters('clientIp')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "sqlServerFqdn": {
+      "type": "string",
+      "value": "[format('{0}.database.windows.net', parameters('sqlServerName'))]"
+    },
+    "database": {
+      "type": "string",
+      "value": "[parameters('databaseName')]"
+    },
+    "adminUser": {
+      "type": "string",
+      "value": "[parameters('adminLogin')]"
+    }
+  }
+}

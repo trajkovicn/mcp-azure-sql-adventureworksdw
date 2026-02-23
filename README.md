@@ -1,0 +1,117 @@
+# MCP + Azure SQL (AdventureWorksDW) Starter
+
+A reproducible starter repo to help you learn **MCP (Model Context Protocol)** by exposing **read-only tools** over an **Azure SQL Database**.
+
+> ✅ Designed for: Azure subscription + Azure CLI + Python + VS Code.
+
+## What you get
+
+- **One-command infrastructure**: deploy Azure SQL Server + Database (Bicep + Azure CLI)
+- **One-command seed**: load a small *AdventureWorksDW-like* dataset into Azure SQL Database
+- **Python MCP server**: exposes a few useful tools over the dataset
+- **Polished DX**: deploy, seed, run, and destroy scripts
+
+## Architecture
+
+```
+MCP Client (Claude Desktop / Agent)
+        |
+        | MCP (stdio)
+        v
+Python MCP Server (server/src/server.py)
+        |
+        | ODBC (pyodbc)
+        v
+Azure SQL Database (AdventureWorksDW)
+```
+
+---
+
+## 🚀 Deploy to Azure (button)
+
+> The **Deploy to Azure** button works with **ARM JSON templates** hosted in a **public** GitHub repo.
+> This repo includes `infra/azuredeploy.json` specifically for that experience.
+
+1. Publish this repo to GitHub (public).
+2. Replace `<YOUR_GITHUB_ORG>` and `<YOUR_REPO>` in the link below.
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2F<YOUR_GITHUB_ORG>%2F<YOUR_REPO>%2Fmain%2Finfra%2Fazuredeploy.json)
+
+---
+
+## Prerequisites
+
+- Azure subscription + permissions to create Azure SQL resources
+- [Azure CLI](https://learn.microsoft.com/cli/azure/)
+- Python 3.10+ (3.11 recommended)
+- ODBC Driver 18 for SQL Server
+
+> Tip: if `pyodbc` install fails, it’s usually due to missing ODBC drivers.
+
+---
+
+## Quickstart (Azure CLI)
+
+### 1) Login and select subscription
+
+```bash
+az login
+az account set --subscription "<SUBSCRIPTION_ID>"
+```
+
+### 2) Deploy Azure SQL (Bicep)
+
+```bash
+chmod +x infra/deploy.sh infra/destroy.sh seed/seed_minidw.sh
+
+./infra/deploy.sh \
+  -g rg-mcp-awdw \
+  -l eastus \
+  -n <globally-unique-sql-server-name> \
+  -u sqladmin
+```
+
+This writes `server/.env` with your connection settings.
+
+### 3) Seed the database (Mini AdventureWorksDW)
+
+```bash
+./seed/seed_minidw.sh
+```
+
+### 4) Run the MCP server
+
+```bash
+cd server
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python src/server.py
+```
+
+### 5) Connect an MCP client
+
+- For Claude Desktop, see: `client/claude_desktop_config.json.example`
+- Try prompts from: `client/examples/sample_prompts.md`
+
+---
+
+## Clean up
+
+```bash
+./infra/destroy.sh -g rg-mcp-awdw
+```
+
+---
+
+## Notes about AdventureWorksDW data
+
+This repo seeds a **mini AdventureWorksDW-style schema** that works reliably on Azure SQL Database.
+
+If you want the **full** AdventureWorksDW dataset, see `seed/README.md` for options (e.g., import a `.bacpac`).
+
+---
+
+## License
+
+MIT (recommended for starters). Add your preferred license file.
