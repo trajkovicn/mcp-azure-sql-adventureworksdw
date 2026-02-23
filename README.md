@@ -27,13 +27,12 @@ Azure SQL Database (AdventureWorksDW)
 
 ---
 
-## 🚀 Deploy to Azure (button)
+## 🚀 Deploy to Azure
 
-> The **Deploy to Azure** button works with **ARM JSON templates** hosted in a **public** GitHub repo.
-> This repo includes `infra/azuredeploy.json` specifically for that experience.
+This repository includes an Azure Resource Manager (ARM) template that deploys
+an Azure SQL Server and database required for the MCP starter.
 
-1. Publish this repo to GitHub (public).
-2. Replace `<YOUR_GITHUB_ORG>` and `<YOUR_REPO>` in the link below.
+Click the button below to deploy directly into your Azure subscription:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/trajkovicn/mcp-azure-sql-adventureworksdw/main/infra/azuredeploy.json)
 
