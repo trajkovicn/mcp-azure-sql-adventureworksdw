@@ -35,8 +35,8 @@ Azure SQL Database (AdventureWorksDW)
 1. Publish this repo to GitHub (public).
 2. Replace `<YOUR_GITHUB_ORG>` and `<YOUR_REPO>` in the link below.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/trajkovicn/mcp-azure-sql-adventureworksdw/main/infra/azuredeploy.json
-)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/trajkovicn/mcp-azure-sql-adventureworksdw/main/infra/azuredeploy.json)
+
 
 
 ---
