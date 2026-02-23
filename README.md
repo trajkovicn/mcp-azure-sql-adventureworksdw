@@ -1,3 +1,9 @@
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/trajkovicn/mcp-azure-sql-adventureworksdw/main/infra/azuredeploy.json)
+![Azure SQL](https://img.shields.io/badge/Azure-SQL%20Database-blue)
+![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 # MCP + Azure SQL (AdventureWorksDW) Starter
 
 A reproducible starter repo to help you learn **MCP (Model Context Protocol)** by exposing **read-only tools** over an **Azure SQL Database**.
@@ -50,6 +56,27 @@ Click the button below to deploy directly into your Azure subscription:
 > Tip: if `pyodbc` install fails, it’s usually due to missing ODBC drivers.
 
 ---
+
+## 💰 Cost & Cleanup Warning
+
+This project deploys **Azure SQL Database**, which is a **billable Azure resource**.
+
+While this starter uses **low-cost defaults**, charges will continue to accrue
+as long as the resources exist in your subscription.
+
+### What gets created
+- Azure SQL logical server
+- Azure SQL Database (`AdventureWorksDW`)
+- Firewall rules
+
+### Important
+- This repo is intended for **learning and experimentation**
+- **Do not leave resources running** when you are finished
+- Always delete the resource group to stop charges
+
+### Clean up when finished
+```bash
+./infra/destroy.sh -g <your-resource-group>
 
 ## Quickstart (Azure CLI)
 
