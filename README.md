@@ -34,7 +34,7 @@ A hands-on starter repo that connects a **Python MCP server** to an **Azure SQL 
 ## Architecture
 
 ```
-MCP Client (Claude Desktop / VS Code / Agent)
+MCP Client (VS Code + GitHub Copilot)
         │
         │  MCP protocol (stdio)
         ▼
@@ -68,6 +68,7 @@ All tools are **read-only** — they execute parameterized `SELECT` queries and 
 
 ---
 
+
 # 🚀 Quickstart (Recommended): Use the Shared Read-Only Database
 
 To keep the focus on **MCP concepts**, the recommended path uses a **shared, read-only database** hosted by the instructor / training environment.
@@ -76,8 +77,8 @@ To keep the focus on **MCP concepts**, the recommended path uses a **shared, rea
 
 - Git
 - Python 3.10+ (3.11 recommended)
+- VS Code (1.99+) with **GitHub Copilot** and **GitHub Copilot Chat** extensions
 - ODBC Driver 18 for SQL Server ([download](https://learn.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server))
-- An MCP client — e.g., [Claude Desktop](https://claude.ai/download) or any MCP-compatible client
 
 > **Tip:** If `pyodbc` install fails, it's almost always a missing ODBC driver.
 
@@ -90,6 +91,7 @@ Open a terminal (Command Prompt, PowerShell, or your shell of choice) and run th
 | **Git** | 2.40+ | `git --version` |
 | **Python** | 3.10+ | `python --version` |
 | **pip** | 22.0+ | `pip --version` |
+| **VS Code** | 1.99+ | `code --version` |
 | **ODBC Driver 18** | 18.x | see below |
 
 **Check ODBC driver:**
@@ -104,13 +106,12 @@ odbcinst -q -d | grep "ODBC Driver 18"
 
 If any tool is missing or below the minimum version, install or update it before continuing.
 
-> **Optional but recommended:**
+> **Optional:**
 >
 > | Tool | Purpose | Check command |
 > |---|---|---|
 > | **Azure CLI** | Deploy your own Azure SQL (optional section) | `az --version` |
-> | **VS Code** | Recommended editor | `code --version` |
-> | **Claude Desktop** | MCP client for testing | Open the app → check version in *Settings* |
+> | **Claude Desktop** | Alternative MCP client | Open the app → check version in *Settings* |
 
 ## 1) Clone the repo
 
@@ -119,26 +120,28 @@ git clone https://github.com/trajkovicn/mcp-azure-sql-adventureworksdw.git
 cd mcp-azure-sql-adventureworksdw
 ```
 
-## 2) Create the `.env` file
+## 2) Configure the MCP server connection
 
-Copy the provided template and fill in the values from your instructor:
+Open `.vscode/mcp.json` in your workspace and update the `env` values with the connection details provided by your instructor:
 
-```bash
-# macOS / Linux
-cp server/.env.example server/.env
-
-# Windows (PowerShell)
-Copy-Item server/.env.example server/.env
+```json
+{
+  "servers": {
+    "adventureworks": {
+      "command": "python",
+      "args": ["-u", "server/src/server.py"],
+      "env": {
+        "SQL_SERVER": "<server>.database.windows.net",
+        "SQL_DATABASE": "AdventureWorks",
+        "SQL_USER": "<username>",
+        "SQL_PASSWORD": "<password>"
+      }
+    }
+  }
+}
 ```
 
-Then open `server/.env` and fill in the connection details:
-
-```env
-SQL_SERVER=<server>.database.windows.net
-SQL_DATABASE=AdventureWorks
-SQL_USER=sqladmin
-SQL_PASSWORD=<password>
-```
+> **Note:** VS Code injects these environment variables directly into the MCP server process — no `.env` file is needed when using VS Code.
 
 ## 3) Install dependencies and run the server
 
@@ -158,34 +161,19 @@ python src/server.py
 
 The server starts on **stdio** — it's now waiting for an MCP client to connect.
 
-## 4) Connect an MCP client
+## 4) Connect VS Code to the MCP server
 
-### Claude Desktop
+1. Open VS Code in the workspace (`code .`)
+2. Open **Settings** (`Ctrl+,`) and search for `chat.mcp.enabled` — make sure it's checked
+3. Open **Copilot Chat** (`Ctrl+Shift+I` or the Chat panel)
+4. Switch to **Agent mode** (dropdown at the top of the chat panel)
+5. Click the **Tools** icon — you should see the three MCP tools listed
 
-Add the server to your Claude Desktop config (see `client/claude_desktop_config.json.example`):
-
-```json
-{
-  "mcpServers": {
-    "adventureworks": {
-      "command": "python",
-      "args": ["-u", "server/src/server.py"],
-      "env": {
-        "SQL_SERVER": "<server>.database.windows.net",
-        "SQL_DATABASE": "AdventureWorks",
-        "SQL_USER": "<username>",
-        "SQL_PASSWORD": "<password>"
-      }
-    }
-  }
-}
-```
-
-Restart Claude Desktop. You should see the three tools available in the tool picker.
+If the tools don't appear, try reloading the window (`Ctrl+Shift+P` → *Developer: Reload Window*).
 
 ## 5) Try sample prompts
 
-Once connected, try these prompts to see MCP in action:
+In the Copilot Chat panel (Agent mode), try these prompts to see MCP in action:
 
 - *"Who are the top 5 customers by sales in 2008?"*
 - *"Show sales by product category for 2008. Summarize in one paragraph."*
@@ -211,41 +199,77 @@ As you try the sample prompts, pay attention to:
 
 # 🏗️ Optional: Deploy Your Own Azure SQL Database
 
-If you want to run your own database instead of using the shared one, follow the steps below.
+If you want to run your own database instead of using the shared one, you can provision an Azure SQL Server with the **AdventureWorksLT** sample database through the [Azure Portal](https://portal.azure.com).
 
-> **Note:** AdventureWorksLT comes **pre-loaded** when you create an Azure SQL Database with the sample dataset — no seed scripts needed.
+## About AdventureWorksLT
 
-## Prerequisites
+**AdventureWorksLT** (Lightweight) is a sample OLTP database provided by Microsoft. It ships with Azure SQL Database as a built-in option — when you create a new database and select **"Sample"** as the data source, Azure automatically loads the AdventureWorksLT schema and data. No `.bacpac` import or seed scripts required.
 
-- Azure subscription + permissions to create Azure SQL resources
-- [Azure CLI](https://learn.microsoft.com/cli/azure/)
+The schema uses the `SalesLT` namespace and includes:
 
-## Deploy to Azure (one-click)
+| Table | Description |
+|---|---|
+| `SalesLT.Customer` | Customer names, contact info, company |
+| `SalesLT.Address` / `CustomerAddress` | Customer addresses |
+| `SalesLT.Product` | Products with prices, colors, sizes |
+| `SalesLT.ProductCategory` | Product category hierarchy |
+| `SalesLT.ProductModel` / `ProductDescription` | Product metadata and descriptions |
+| `SalesLT.SalesOrderHeader` | Order headers (date, status, totals) |
+| `SalesLT.SalesOrderDetail` | Order line items (product, quantity, price) |
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/trajkovicn/mcp-azure-sql-adventureworksdw/main/infra/azuredeploy.json)
+The sample data contains ~800 customers, ~300 products, and ~30,000 order line items.
 
-## Deploy to Azure (CLI)
+## Database requirements
 
-```bash
-az login
-az account set --subscription "<SUBSCRIPTION_ID>"
+When creating your Azure SQL Database in the portal, use the following settings:
 
-chmod +x infra/deploy.sh
+| Setting | Value |
+|---|---|
+| **Resource** | Azure SQL Database (single database) |
+| **Database name** | `AdventureWorks` (or your preference) |
+| **Data source** | **Sample** (loads AdventureWorksLT automatically) |
+| **Service tier** | General Purpose |
+| **Compute tier** | Serverless |
+| **Compute hardware** | Standard-series (Gen5) |
+| **vCores** | 1 (minimum) |
+| **Auto-pause delay** | 1 hour (saves cost when idle) |
+| **Max storage** | 32 GB (default is fine) |
+| **Backup redundancy** | Locally-redundant (cheapest option) |
+| **Authentication** | SQL authentication |
 
-./infra/deploy.sh \
-  -g rg-mcp-awdw \
-  -l eastus \
-  -n <globally-unique-sql-server-name> \
-  -u sqladmin
+> **Estimated cost:** General Purpose Serverless with 1 vCore costs roughly **$0.50–$1.50/day** depending on activity. Auto-pause stops compute charges when the database is idle.
+
+## Network access (required)
+
+By default, Azure SQL blocks all external connections. To connect from your local machine, you need to configure network access on the **SQL server** resource (not the database):
+
+1. Navigate to your **SQL server** in the Azure Portal
+2. Go to **Networking** (under Security)
+3. Under **Public network access**, select **Selected networks**
+4. Under **Firewall rules**:
+   - Click **+ Add your client IPv4 address** — this adds your current IP
+   - For training purposes, you can add the rule `0.0.0.0` to `255.255.255.255` to allow all IPs (⚠️ not recommended for production)
+5. Optionally check **Allow Azure services and resources to access this server**
+6. Click **Save**
+
+> **⚠️ Security note:** Public access with broad IP rules is acceptable for a short-lived training database. For production workloads, use [private endpoints](https://learn.microsoft.com/azure/azure-sql/database/private-endpoint-overview) or VNet service endpoints.
+
+## Connect your MCP server
+
+Once your database is provisioned, update your `.vscode/mcp.json`:
+
+```json
+"env": {
+  "SQL_SERVER": "<your-server-name>.database.windows.net",
+  "SQL_DATABASE": "AdventureWorks",
+  "SQL_USER": "sqladmin",
+  "SQL_PASSWORD": "<your-password>"
+}
 ```
 
-This creates the Azure SQL Server + Database and writes `server/.env` with your connection settings.
+## 💰 Cleanup
 
-## Clean up
-
-```bash
-./infra/destroy.sh -g rg-mcp-awdw
-```
+**Always delete the resource group when you're done** to stop charges. You can do this in the Azure Portal by navigating to your resource group and clicking **Delete resource group**.
 
 ---
 
