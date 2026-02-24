@@ -1,5 +1,5 @@
-![Azure SQL](https://img.shields.io/badge/Azure-SQL%20Database-blue)
 ![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple)
+![Azure SQL](https://img.shields.io/badge/Azure-SQL%20Database-blue)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
