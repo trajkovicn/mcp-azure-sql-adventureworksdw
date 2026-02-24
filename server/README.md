@@ -1,6 +1,6 @@
 # MCP Server
 
-This folder contains a Python MCP server that exposes read-only tools backed by the **AdventureWorksDW** Azure SQL Database deployed by `infra/`.
+This folder contains a Python MCP server that exposes read-only tools backed by the **AdventureWorksLT** Azure SQL Database.
 
 ## Run locally
 
@@ -10,7 +10,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Ensure server/.env exists (created by infra/deploy scripts)
+# Ensure server/.env exists with SQL_SERVER, SQL_DATABASE, SQL_USER, SQL_PASSWORD
 python src/server.py
 ```
 
@@ -18,6 +18,6 @@ python src/server.py
 
 - `top_customers_by_sales(year, limit=5)`
 - `sales_by_category(year)`
-- `customer_orders(customer_key, limit=25)`
+- `customer_orders(customer_id, limit=25)`
 
-These query a **mini** AdventureWorksDW-style schema created by `seed/seed_minidw.*`.
+These query the `SalesLT` schema in AdventureWorksLT (Customer, Product, ProductCategory, SalesOrderHeader, SalesOrderDetail).

@@ -4,7 +4,7 @@ import pyodbc
 
 def connect():
     server = os.environ["SQL_SERVER"]
-    database = os.environ.get("SQL_DATABASE", "AdventureWorksDW")
+    database = os.environ.get("SQL_DATABASE", "AdventureWorks")
     user = os.environ["SQL_USER"]
     password = os.environ["SQL_PASSWORD"]
 

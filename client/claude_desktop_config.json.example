@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "adventureworksdw": {
+    "adventureworks": {
       "command": "python",
       "args": [
         "-u",
@@ -8,7 +8,7 @@
       ],
       "env": {
         "SQL_SERVER": "<your-server>.database.windows.net",
-        "SQL_DATABASE": "AdventureWorksDW",
+        "SQL_DATABASE": "AdventureWorks",
         "SQL_USER": "<adminLogin>",
         "SQL_PASSWORD": "<password>"
       }

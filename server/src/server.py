@@ -1,4 +1,4 @@
-"""MCP server exposing read-only tools over a mini AdventureWorksDW dataset."""
+"""MCP server exposing read-only tools over the AdventureWorksLT dataset."""
 
 import os
 from dotenv import load_dotenv
@@ -20,7 +20,7 @@ def load_env():
 
 load_env()
 
-mcp = FastMCP("adventureworksdw-mcp")
+mcp = FastMCP("adventureworks-mcp")
 
 
 @mcp.tool()
@@ -36,9 +36,9 @@ def sales_by_category(year: int):
 
 
 @mcp.tool()
-def customer_orders(customer_key: int, limit: int = 25):
-    """Get a customer's recent orders (order number, date, total)."""
-    return get_customer_orders(customer_key=customer_key, limit=limit)
+def customer_orders(customer_id: int, limit: int = 25):
+    """Get a customer's recent orders (order ID, date, status, total)."""
+    return get_customer_orders(customer_id=customer_id, limit=limit)
 
 
 if __name__ == "__main__":

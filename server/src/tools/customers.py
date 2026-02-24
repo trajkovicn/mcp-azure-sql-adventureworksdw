@@ -2,18 +2,19 @@ from ..db import connect
 
 
 def get_top_customers_by_sales(year: int, limit: int = 5):
-    """Return top customers by sales amount in a given calendar year."""
+    """Return top customers by total sales amount in a given calendar year."""
     query = """
     SELECT TOP (?)
-        c.CustomerKey,
+        c.CustomerID,
         c.FirstName,
         c.LastName,
-        SUM(f.SalesAmount) AS TotalSales
-    FROM dbo.FactInternetSales f
-    JOIN dbo.DimCustomer c ON f.CustomerKey = c.CustomerKey
-    JOIN dbo.DimDate d ON f.OrderDateKey = d.DateKey
-    WHERE d.CalendarYear = ?
-    GROUP BY c.CustomerKey, c.FirstName, c.LastName
+        c.CompanyName,
+        SUM(od.LineTotal) AS TotalSales
+    FROM SalesLT.Customer c
+    JOIN SalesLT.SalesOrderHeader oh ON c.CustomerID = oh.CustomerID
+    JOIN SalesLT.SalesOrderDetail od ON oh.SalesOrderID = od.SalesOrderID
+    WHERE YEAR(oh.OrderDate) = ?
+    GROUP BY c.CustomerID, c.FirstName, c.LastName, c.CompanyName
     ORDER BY TotalSales DESC;
     """
 
@@ -23,9 +24,10 @@ def get_top_customers_by_sales(year: int, limit: int = 5):
 
     return [
         {
-            "customer_key": int(r.CustomerKey),
+            "customer_id": int(r.CustomerID),
             "first_name": r.FirstName,
             "last_name": r.LastName,
+            "company_name": r.CompanyName,
             "total_sales": float(r.TotalSales),
         }
         for r in rows
