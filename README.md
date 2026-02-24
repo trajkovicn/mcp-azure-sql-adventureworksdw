@@ -5,6 +5,8 @@
 
 # MCP + Azure SQL (AdventureWorksLT) Starter
 
+`mcp` `model-context-protocol` `mcp-server` `azure-sql` `adventureworks` `llm` `ai` `python` `vscode` `copilot` `sql-server` `pyodbc`
+
 > **Training goal:** Teach how MCP enables LLMs to safely, predictably, and transparently pull data from an external SQL database and use it for reasoning and responses.
 
 A hands-on starter repo that connects a **Python MCP server** to an **Azure SQL Database** (AdventureWorksLT schema). You'll see firsthand how an LLM discovers available tools, calls them with structured parameters, receives typed results, and reasons over real data — all without writing raw SQL or giving the model direct database access.
