@@ -1,4 +1,4 @@
-from ..db import connect
+from db import connect
 
 
 def get_top_customers_by_sales(year: int, limit: int = 5):

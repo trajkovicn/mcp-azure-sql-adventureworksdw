@@ -1,4 +1,4 @@
-from ..db import connect
+from db import connect
 
 
 def get_customer_orders(customer_id: int, limit: int = 25):

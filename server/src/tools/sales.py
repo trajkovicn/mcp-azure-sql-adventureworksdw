@@ -1,4 +1,4 @@
-from ..db import connect
+from db import connect
 
 
 def get_sales_by_category(year: int):
