@@ -6,10 +6,7 @@
       "value": "AdventureWorksDW"
     },
     "skuName": {
-      "value": "S0"
-    },
-    "allowAzureServices": {
-      "value": true
+      "value": "S1"
     },
     "clientIp": {
       "value": ""

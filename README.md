@@ -201,7 +201,15 @@ As you try the sample prompts, pay attention to:
 
 # 🏗️ Optional: Deploy Your Own Azure SQL Database
 
-If you want to run your own database instead of using the shared one, you can provision an Azure SQL Server with the **AdventureWorksLT** sample database through the [Azure Portal](https://portal.azure.com).
+If you want to run your own database instead of using the shared one, you can provision an Azure SQL Server with the **AdventureWorksLT** sample database.
+
+### One-click deploy
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftrajkovicn%2Fmcp-azure-sql-adventureworksdw%2Fmain%2Finfra%2Fazuredeploy.json)
+
+This deploys an Azure SQL Server + Database with the AdventureWorksLT sample data pre-loaded. You'll be prompted for a server name, admin login, and password.
+
+Alternatively, you can create the resources manually through the [Azure Portal](https://portal.azure.com).
 
 ## About AdventureWorksLT
 
